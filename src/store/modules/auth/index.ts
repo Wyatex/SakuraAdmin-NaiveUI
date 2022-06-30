@@ -1,6 +1,4 @@
-import { unref } from 'vue';
 import { defineStore } from 'pinia';
-import { router } from '@/router';
 import { useRouterPush } from '@/composables';
 import { fetchLogin, fetchUserInfo } from '@/service';
 import { getUserInfo, getToken, setUserInfo, setToken, setRefreshToken, clearAuthStorage } from '@/utils';
@@ -34,17 +32,13 @@ export const useAuthStore = defineStore('auth-store', {
       const { toLogin } = useRouterPush(false);
       const { resetTabStore } = useTabStore();
       const { resetRouteStore } = useRouteStore();
-      const route = unref(router.currentRoute);
 
       clearAuthStorage();
       this.$reset();
 
       resetTabStore();
       resetRouteStore();
-
-      if (route.meta.requiresAuth) {
-        toLogin();
-      }
+			toLogin();
     },
     /**
      * 处理登录后成功或失败的逻辑
@@ -62,7 +56,7 @@ export const useAuthStore = defineStore('auth-store', {
         // 登录成功弹出欢迎提示
         window.$notification?.success({
           title: '登录成功!',
-          content: `欢迎回来，${this.userInfo.userName}!`,
+          content: `欢迎回来，${this.userInfo.nickname}!`,
           duration: 3000
         });
 
@@ -107,39 +101,61 @@ export const useAuthStore = defineStore('auth-store', {
     async login(userName: string, password: string) {
       this.loginLoading = true;
       const { data } = await fetchLogin(userName, password);
-      if (data) {
-        await this.handleActionAfterLogin(data);
+      // 登录成功，直接获取用户信息、token、路由
+      if (data?.userInfo && data?.token && data?.route) {
+				const { setRoute } = useRouteStore();
+        setToken(data.token);
+        setUserInfo(data.userInfo);
+        setRoute(data.route);
+        this.userInfo = data.userInfo;
+
+        const { toLoginRedirect } = useRouterPush(false);
+
+        // 登录成功弹出欢迎提示
+        window.$notification?.success({
+          title: '登录成功!',
+          content: `欢迎回来，${data.userInfo.nickname}!`,
+          duration: 3000
+        });
+
+        toLoginRedirect();
+        this.loginLoading = false;
+        return;
       }
       this.loginLoading = false;
+
+      // 不成功重置状态
+      this.resetAuthStore();
     },
     /**
      * 更换用户权限(切换账号)
      * @param userRole
      */
     async updateUserRole(userRole: Auth.RoleType) {
-      const { resetRouteStore, initAuthRoute } = useRouteStore();
+			console.log(userRole);
+      // const { resetRouteStore, initAuthRoute } = useRouteStore();
 
-      const accounts: Record<Auth.RoleType, { userName: string; password: string }> = {
-        super: {
-          userName: 'Super',
-          password: 'super123'
-        },
-        admin: {
-          userName: 'Admin',
-          password: 'admin123'
-        },
-        user: {
-          userName: 'User01',
-          password: 'user01123'
-        }
-      };
-      const { userName, password } = accounts[userRole];
-      const { data } = await fetchLogin(userName, password);
-      if (data) {
-        await this.loginByToken(data);
-        resetRouteStore();
-        initAuthRoute();
-      }
+      // const accounts: Record<Auth.RoleType, { userName: string; password: string }> = {
+      //   super: {
+      //     userName: 'Super',
+      //     password: 'super123'
+      //   },
+      //   admin: {
+      //     userName: 'Admin',
+      //     password: 'admin123'
+      //   },
+      //   user: {
+      //     userName: 'User01',
+      //     password: 'user01123'
+      //   }
+      // };
+      // const { userName, password } = accounts[userRole];
+      // const { data } = await fetchLogin(userName, password);
+      // if (data) {
+      //   await this.loginByToken(data);
+      //   resetRouteStore();
+      //   initAuthRoute();
+      // }
     }
   }
 });

@@ -11,8 +11,8 @@
       <github-site />
       <full-screen />
       <theme-mode />
+      <setting-button />
       <system-message />
-      <setting-button v-if="isProd" />
       <user-avatar />
     </div>
   </dark-mode-container>
@@ -47,7 +47,7 @@ defineProps<Props>();
 
 const theme = useThemeStore();
 
-const isProd = import.meta.env.PROD;
+// const isProd = import.meta.env.PROD;
 </script>
 
 <style scoped>

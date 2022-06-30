@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosRequestConfig, AxiosInstance, AxiosError } from 'axios';
 import { REFRESH_TOKEN_CODE } from '@/config';
+import { useAuthStore } from '@/store';
 import {
   getToken,
   transformRequestData,
@@ -9,7 +10,6 @@ import {
   handleBackendError,
   handleServiceResult
 } from '@/utils';
-import { handleRefreshToken } from './helpers';
 
 /**
  * 封装axios请求类
@@ -31,7 +31,7 @@ export default class CustomAxiosInstance {
       codeKey: 'code',
       dataKey: 'data',
       msgKey: 'message',
-      successCode: 200
+      successKey: 'success'
     }
   ) {
     this.backendConfig = backendConfig;
@@ -49,7 +49,7 @@ export default class CustomAxiosInstance {
           const contentType = handleConfig.headers['Content-Type'] as string;
           handleConfig.data = await transformRequestData(handleConfig.data, contentType);
           // 设置token
-          handleConfig.headers.Authorization = getToken();
+          handleConfig.headers.Authorization = `Bearer ${getToken()}`;
         }
         return handleConfig;
       },
@@ -63,18 +63,16 @@ export default class CustomAxiosInstance {
         const { status } = response;
         if (status === 200 || status < 300 || status === 304) {
           const backend = response.data;
-          const { codeKey, dataKey, successCode } = this.backendConfig;
+          const { codeKey, dataKey, successKey } = this.backendConfig;
           // 请求成功
-          if (backend[codeKey] === successCode) {
+          if (backend[successKey]) {
             return handleServiceResult(null, backend[dataKey]);
           }
 
-          // token失效, 刷新token
+          // token失效, 退出登录并回到登录界面
           if (REFRESH_TOKEN_CODE.includes(backend[codeKey])) {
-            const config = await handleRefreshToken(response.config);
-            if (config) {
-              return this.instance.request(config);
-            }
+            const { resetAuthStore } = useAuthStore();
+            resetAuthStore();
           }
 
           const error = handleBackendError(backend, this.backendConfig);

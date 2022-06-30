@@ -12,6 +12,15 @@ declare namespace Common {
    * [状态, 为true时执行的回调函数]
    */
   type StrategyAction = [boolean, () => void];
+
+	interface Recordable {
+    [k: string | number]: unknown;
+  }
+
+  interface KeyLabel {
+    key: string | number;
+    label: string | number;
+  }
 }
 
 /** 构建时间 */

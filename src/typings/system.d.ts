@@ -53,7 +53,7 @@ declare namespace Service {
     /** 表示后端消息的属性字段 */
     msgKey: string;
     /** 后端业务上定义的成功请求的状态 */
-    successCode: number | string;
+    successKey: string;
   }
 
   /** 自定义的请求成功结果 */
@@ -83,6 +83,8 @@ declare namespace Service {
     data: T;
     /** 接口消息 */
     message: string;
+
+		success: boolean;
   }
 
   /** mock的响应option */

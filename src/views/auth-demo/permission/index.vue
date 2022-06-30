@@ -2,10 +2,10 @@
   <div class="h-full">
     <n-card title="权限切换" class="h-full shadow-sm rounded-16px">
       <div class="pb-12px">
-        <n-gradient-text type="primary" :size="20">当前用户的权限：{{ auth.userInfo.userRole }}</n-gradient-text>
+        <n-gradient-text type="primary" :size="20">当前用户的权限：{{ auth.userInfo.nickname }}</n-gradient-text>
       </div>
       <n-select
-        :value="auth.userInfo.userRole"
+        :value="auth.userInfo.nickname"
         class="w-120px"
         size="small"
         :options="options"
@@ -32,13 +32,13 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
+// import { watch } from 'vue';
 import type { SelectOption } from 'naive-ui';
 import { EnumUserRole } from '@/enum';
-import { useAppStore, useAuthStore } from '@/store';
+import { useAuthStore } from '@/store';
 import { usePermission } from '@/composables';
 
-const app = useAppStore();
+// const app = useAppStore();
 const auth = useAuthStore();
 const { hasPermission } = usePermission();
 
@@ -55,12 +55,12 @@ const roleList: RoleList[] = [
 
 const options: SelectOption[] = roleList as unknown as SelectOption[];
 
-watch(
-  () => auth.userInfo.userRole,
-  async () => {
-    app.reloadPage();
-  }
-);
+// watch(
+//   () => auth.userInfo.userRole,
+//   async () => {
+//     app.reloadPage();
+//   }
+// );
 </script>
 
 <style scoped></style>

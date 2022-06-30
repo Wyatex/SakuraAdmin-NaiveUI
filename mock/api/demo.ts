@@ -8,6 +8,7 @@ const apis: MockMethod[] = [
       return {
         code: 200,
         message: 'ok',
+				success: true,
         data: {
           dataId: '123',
           dataName: 'demoName'

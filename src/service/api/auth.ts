@@ -1,4 +1,4 @@
-import { mockRequest } from '../request';
+import { mockRequest, request } from '../request';
 
 /**
  * 获取验证码
@@ -11,11 +11,15 @@ export function fetchSmsCode(phone: string) {
 
 /**
  * 登录
- * @param userName - 用户名
+ * @param username - 用户名
  * @param password - 密码
  */
-export function fetchLogin(userName: string, password: string) {
-  return mockRequest.post<ApiAuth.Token>('/login', { userName, password });
+export async function fetchLogin(username: string, password: string) {
+	// 这里先用mock的路由
+	const mockRouter = await mockRequest.post<ApiRoute.Route>('/getUserRoutes', { userId: 0 });
+	const res = await request.post<ApiAuth.LoginData>('/login', { username, password });
+	res.data?.route.routes.push(...(mockRouter.data?.routes as AuthRoute.Route[]))
+  return res
 }
 
 /** 获取用户信息 */
@@ -28,8 +32,12 @@ export function fetchUserInfo() {
  * @param userId - 用户id
  * @description 后端根据用户id查询到对应的角色类型，并将路由筛选出对应角色的路由数据返回前端
  */
-export function fetchUserRoutes(userId: string) {
-  return mockRequest.post<ApiRoute.Route>('/getUserRoutes', { userId });
+export async function fetchUserRoutes() {
+	// 这里先用mock的路由
+	const mockRouter = await mockRequest.post<ApiRoute.Route>('/getUserRoutes', { userId: 0 });
+  const apiRouter = await request.post<ApiRoute.Route>('/sysAuth/getRoute');
+	apiRouter.data?.routes.push(...(mockRouter.data?.routes as AuthRoute.Route[]))
+	return apiRouter
 }
 
 /**

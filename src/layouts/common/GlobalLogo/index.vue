@@ -1,9 +1,14 @@
 <template>
   <router-link :to="routeHomePath" class="flex-center w-full nowrap-hidden">
-    <system-logo class="text-32px text-primary" />
-    <h2 v-show="showTitle" class="pl-8px text-16px font-bold text-primary transition duration-300 ease-in-out">
-      {{ title }}
-    </h2>
+    <transition name="zoom-fade" mode="out-in" appear>
+      <div v-if="showTitle" class="flex-center w-full nowrap-hidden">
+        <system-logo class="text-32px text-primary" />
+        <h2 class="pl-8px text-16px font-bold text-primary transition duration-300 ease-in-out">
+          {{ title }}
+        </h2>
+      </div>
+      <system-logo v-else class="text-32px text-primary" />
+    </transition>
   </router-link>
 </template>
 

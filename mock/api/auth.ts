@@ -15,6 +15,7 @@ const apis: MockMethod[] = [
       return {
         code: 200,
         message: 'ok',
+				success: true,
         data: true
       };
     }
@@ -30,16 +31,18 @@ const apis: MockMethod[] = [
         return {
           code: ERROR_PARAM_CODE,
           message: ERROR_PARAM_MSG,
+					success: true,
           data: null
         };
       }
 
-      const findItem = userModel.find(item => item.userName === userName && item.password === password);
+      const findItem = userModel.find(item => item.username === userName && item.password === password);
 
       if (findItem) {
         return {
           code: 200,
           message: 'ok',
+					success: true,
           data: {
             token: findItem.token,
             refreshToken: findItem.refreshToken
@@ -48,6 +51,7 @@ const apis: MockMethod[] = [
       }
       return {
         code: 1000,
+				success: true,
         message: '用户名或密码错误！',
         data: null
       };
@@ -66,19 +70,23 @@ const apis: MockMethod[] = [
         return {
           code: REFRESH_TOKEN_CODE,
           message: '用户已失效或不存在！',
+					success: true,
           data: null
         };
       }
       const userInfo: Auth.UserInfo = {
-        userId: '',
-        userName: '',
-        userRole: 'user'
+        id: '',
+        username: '',
+        nickname: 'user',
+				email: '123@qq.com',
+				avatar: '',
+				phone: ''
       };
       const isInUser = userModel.some(item => {
         const flag = item.token === authorization;
         if (flag) {
-          const { userId: itemUserId, userName, userRole } = item;
-          Object.assign(userInfo, { userId: itemUserId, userName, userRole });
+          const { id: itemUserId, username, nickname } = item;
+          Object.assign(userInfo, { userId: itemUserId, username, nickname });
         }
         return flag;
       });
@@ -87,12 +95,14 @@ const apis: MockMethod[] = [
         return {
           code: 200,
           message: 'ok',
+					success: true,
           data: userInfo
         };
       }
 
       return {
         code: REFRESH_TOKEN_CODE,
+				success: true,
         message: '用户信息异常！',
         data: null
       };
@@ -110,6 +120,7 @@ const apis: MockMethod[] = [
         return {
           code: 200,
           message: 'ok',
+					success: true,
           data: {
             token: findItem.token,
             refreshToken: findItem.refreshToken
@@ -118,6 +129,7 @@ const apis: MockMethod[] = [
       }
       return {
         code: 3000,
+				success: true,
         message: '用户已失效或不存在！',
         data: null
       };

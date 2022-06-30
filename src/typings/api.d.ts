@@ -9,6 +9,11 @@ declare namespace ApiAuth {
   }
   /** 返回的用户信息 */
   type UserInfo = Auth.UserInfo;
+  interface LoginData {
+    token: string;
+    userInfo: Auth.UserInfo;
+    route: ApiRoute.Route;
+  }
 }
 
 /** 后端返回的路由相关类型 */

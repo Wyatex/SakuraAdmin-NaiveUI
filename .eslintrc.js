@@ -55,6 +55,9 @@ module.exports = {
     }
   },
   rules: {
+		'no-param-reassign': 'off',
+    'no-console': 'off',
+    'prettier/prettier': 'off',
     'import/extensions': [
       'warn',
       'ignorePackages',
@@ -185,13 +188,6 @@ module.exports = {
     'import/no-unresolved': ['error', { ignore: ['uno.css', '~icons/*', 'virtual:svg-icons-register'] }],
     'import/prefer-default-export': 'off',
     'max-classes-per-file': 'off',
-    'no-param-reassign': [
-      'error',
-      {
-        props: true,
-        ignorePropertyModificationsFor: ['state', 'acc', 'e']
-      }
-    ],
     'no-shadow': 'off',
     'no-unused-vars': 'off',
     'no-use-before-define': 'off',
@@ -201,6 +197,7 @@ module.exports = {
         ignores: ['index']
       }
     ],
+		'vue/first-attribute-linebreak': 'off',
     '@typescript-eslint/no-empty-interface': [
       'error',
       {

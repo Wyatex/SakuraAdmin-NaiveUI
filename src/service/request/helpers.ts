@@ -16,7 +16,7 @@ export async function handleRefreshToken(axiosConfig: AxiosRequestConfig) {
     setRefreshToken(data.refreshToken);
     const config = { ...axiosConfig };
     if (config.headers) {
-      config.headers.Authorization = data.token;
+      config.headers.Authorization = `Bearer ${data.token}`;
     }
     return config;
   }

@@ -1,22 +1,18 @@
 import type { MockMethod } from 'vite-plugin-mock';
-import { userModel, routeModel } from '../model';
+import {  routeModel } from '../model';
 
 const apis: MockMethod[] = [
   {
     url: '/mock/getUserRoutes',
     method: 'post',
-    response: (options: Service.MockOption): Service.MockServiceResult => {
-      const { userId = undefined } = options.body;
-
+    response: (): Service.MockServiceResult => {
       const routeHomeName: AuthRoute.RouteKey = 'dashboard_analysis';
-
-      const role = userModel.find(item => item.userId === userId)?.userRole || 'user';
-
-      const filterRoutes = routeModel[role];
+      const filterRoutes = routeModel.super;
 
       return {
         code: 200,
         message: 'ok',
+				success: true,
         data: {
           routes: filterRoutes,
           home: routeHomeName

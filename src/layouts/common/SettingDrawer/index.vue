@@ -9,16 +9,15 @@
       <theme-config />
     </n-drawer-content>
   </n-drawer>
-  <drawer-button v-if="isDev" />
+  <!-- <drawer-button v-if="isDev" /> -->
 </template>
 
 <script setup lang="ts">
 import { useAppStore } from '@/store';
-import { DrawerButton, DarkMode, LayoutMode, ThemeColorSelect, PageFunc, PageView, ThemeConfig } from './components';
+import { DarkMode, LayoutMode, ThemeColorSelect, PageFunc, PageView, ThemeConfig } from './components';
 
 const app = useAppStore();
 
-const isDev = import.meta.env.DEV;
 </script>
 
 <style scoped></style>
