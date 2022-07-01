@@ -1,4 +1,4 @@
-import { computed, ref, h, Ref } from 'vue';
+import { computed, ref, h, type Ref } from 'vue';
 import { DataTableColumns, PaginationProps } from 'naive-ui';
 import type { RowKey } from 'naive-ui/lib/data-table/src/interface';
 import ActionColumn from './actionColumn.vue';
@@ -20,45 +20,55 @@ export default function useDataTable(
   };
 
   // 分页配置
-  const insPagination = ref<any>();
-  const getPagination = computed(() => {
-    if (pagination === false) {
-      return false;
+  let insPagination = false as false | Ref<PaginationProps>;
+  if (pagination === false) {
+    insPagination = false;
+  } else if (pagination === 'self') {
+    const pageSizes = paginationSetting.pageSizes.map(item => item);
+    const { defaultPageSize } = paginationSetting;
+    insPagination = ref<PaginationProps>({
+      page: 1,
+      pageSize: defaultPageSize,
+      showSizePicker: true,
+      showQuickJumper: true,
+      pageSizes
+    });
+  } else if (pagination) {
+    insPagination = pagination;
+  }
+
+  const paginationComputed = computed(() => {
+    if (!insPagination) {
+      return insPagination;
+    } if (!insPagination.value) {
+      return undefined;
     }
-    if (pagination === 'self') {
-      const pageSizes = paginationSetting.pageSizes.map(item => item);
-      const { defaultPageSize } = paginationSetting;
-      insPagination.value = { page: 1, pageSize: defaultPageSize, showSizePicker: true, pageSizes };
-      return insPagination.value;
-    }
-    if (pagination) {
-      return pagination;
-    }
-    return false;
-  }) as any;
+    return insPagination.value;
+  });
 
   // 表头配置
   const insColumns = computed(() => {
-    let cloumns = [];
+    let tempColumns: DataTableColumns = [];
     // 是否加上勾选栏
     if (showCheck) {
-      cloumns.push({ type: 'selection' });
+      tempColumns.push({ type: 'selection' });
     }
-    cloumns = [...cloumns, ...columns];
+    tempColumns = [...tempColumns, ...columns];
     // 是否加上操作栏
     if (['actionColumn', 'all'].includes(actionType)) {
-      cloumns = [
-        ...cloumns,
+      tempColumns = [
+        ...tempColumns,
         {
           title: '操作栏',
-          render: (row: Common.Recordable) => {
+          key: 'actionColumn',
+          render: row => {
             return h(ActionColumn, { row, actions });
           }
         }
       ];
     }
-    return cloumns;
-  }) as any;
+    return tempColumns;
+  });
 
-  return { insPagination, getPagination, insColumns, checkRows, handleCheck };
+  return { insPagination, paginationComputed, insColumns, checkRows, handleCheck };
 }
