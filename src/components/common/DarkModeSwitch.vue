@@ -1,12 +1,18 @@
 <template>
   <div class="flex-center text-18px cursor-pointer" @click="handleSwitch">
-    <icon-mdi-moon-waning-crescent v-if="darkMode" />
-    <icon-mdi-white-balance-sunny v-else />
+		<n-icon  v-if="darkMode">
+			<icon icon="line-md:moon" />
+		</n-icon>
+		<n-icon v-else >
+			<icon icon="line-md:sun-rising-loop" />
+		</n-icon>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { NIcon } from 'naive-ui';
+import { Icon } from '@iconify/vue';
 
 interface Props {
   /** 暗黑模式 */
